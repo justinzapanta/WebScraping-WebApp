@@ -1,0 +1,169 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+    {% block title %} ScrapeEaseHub {% endblock %}
+
+{% block content %}
+    <div id="info" class="md:flex">
+        <div class="flex-1 md:basis-20 md:pl-8 md:px-0 px-10 md:pt-0 pt-5">
+            <p class="md:mb-10 mb-10 text-index-color-p md:text-xl text-lg md:mt-20 mt-6 indent text-pretty">Are you looking to extract valuable data from the web with ease? Look no further! At ScrapeEaseHub,
+                I provide you with the tools and resources you need to simplify the web scraping process and unlock 
+                insights from diverse online sources.
+            </p>
+            <div id="button" class="flex md:flex-row flex-col md:px-0 px-14">
+                <a id="signin-button" class="md:ml-3 ml-14 text-center font-bold text-white text-xl bg-index-color-purple md:px-14 px-1 py-3 rounded-full hover:bg-index-color-p" style="cursor: pointer;">Sign In</a>
+                <a id="signup-button" class="md:ml-5 text-center font-bold ml-14 mt-7 md:mt-0 text-white text-xl bg-index-color-purple md:px-14 px-1 py-3 rounded-full hover:bg-index-color-p" style="cursor: pointer;">Sign Up</a>
+            </div>
+        </div>
+        <div class="flex-1 md:basis-10">
+            <img id="laptop-image" class="md:h-96 md:absolute md:top-20 md:ml-10 ml-8" src="{% static 'images/image.png'%}" alt="">
+        </div>
+    </div>
+{% endblock %}
+
+{% block content2 %}
+    <div id="signup" class="container w-fit h-fit mt-10 md:mt-20 md:ml-72 border p-20 absolute top-0 md:left-28" style="display: none;">
+        <div class="mb-10 flex">
+            <h1 class="text-2xl text-index-color-purple font-bold flex-1">Sign Up</h1>
+
+            <a id="close" class="hover:text-index-color-purple font-bold text-white text-lg tracking-wider	justify-end" style="cursor: pointer;">Close</a>
+        </div>
+        {% if warning == 'Email Already Exist' %}
+            <p style="color: rgb(202, 83, 83);" id="warning1">{{warning}}</p>
+        {% endif %}
+        <form method="POST" class="flex flex-col">
+            {% csrf_token %}
+            <div class="flex-1 text-white">
+                {{credentialForm.as_p}}
+            </div>
+            <div class="flex-1 text-white">
+                {{userProfileForm.as_p}}
+            </div>
+            <button class="bg-index-color-purple w-40 h-10 text-lg font-bold ml-16 hover:bg-index-color-p mt-10 text-white rounded-full" type="submit">Sign Up</button>
+        </form>
+    </div>
+
+
+    <div id="signin" class="container md:left-28 w-fit h-fit mt-10 md:mt-20 md:ml-72 border p-20 absolute top-0" style="display: none;">
+        <div class="mb-10 flex">
+            <h1 class="text-2xl text-index-color-purple font-bold flex-1">Sign In</h1>
+            <a id="signin-close" class="hover:text-index-color-purple font-bold text-white text-lg tracking-wider	justify-end" style="cursor: pointer;">Close</a>
+        </div>
+        {% if warning == 'Invalid Email or Password' %}
+            <p style="color: rgb(202, 83, 83);" id="warning">{{warning}}</p>
+        {% endif %}
+        <form method="POST" class="flex flex-col">
+            {% csrf_token %}
+            <div class="flex-1 text-white">
+                {{loginForm.as_p}}
+            </div>
+            <button class="bg-index-color-purple w-40 h-10 text-lg font-bold ml-16 hover:bg-index-color-p mt-10 text-white rounded-full" type="submit">Sign In</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let notif = document.querySelector('#warning')
+        let signup_button = document.querySelector('#signup-button')
+        let signin_button = document.querySelector('#signin-button')
+        let signup_form = document.querySelector('#signup')
+        let signin_form = document.querySelector('#signin')
+        let laptop_image = document.querySelector('#laptop-image')
+        let content = document.querySelector('#content')
+        let close = document.querySelector('#close')
+        let sign_close = document.querySelector('#signin-close')
+
+        signup_button.addEventListener('click', () => {
+            signup_form.style.display = 'block'
+            laptop_image.style.display = 'none'
+            content.style.filter = 'blur(10px)'
+        })
+
+        signin_button.addEventListener('click', () => {
+            signin_form.style.display = 'block'
+            laptop_image.style.display = 'none'
+            content.style.filter = 'blur(10px)'
+        })
+
+        close.addEventListener('click', () => {
+            signup_form.style.display = 'none'
+            laptop_image.style.display = 'block'
+            content.style.filter = 'blur(0px)'
+        })
+
+        sign_close.addEventListener('click', () => {
+            signin_form.style.display = 'none'
+            laptop_image.style.display = 'block'
+            content.style.filter = 'blur(0px)'
+        })
+
+    </script>
+{% endblock %}
+
+{% block style %}
+    <style>
+        #content{
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 100vh; 
+        }
+        #signup{
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        #signin{
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        #id_email {
+            height: 1.8rem;
+            color: black;
+            margin-bottom: 1rem;
+            margin-left: 0.5rem;
+
+        }
+        #id_password {
+            height: 1.8rem;
+            color: black;
+            margin-left: 2.3rem;
+            margin-bottom: 1rem;
+            
+        }
+
+        #user_email {
+            height: 1.8rem;
+            color: black;
+            margin-bottom: 1rem;
+            margin-left: 0.5rem;
+
+        }
+        #user_password {
+            height: 1.8rem;
+            color: black;
+            margin-left: 2.3rem;
+            
+        }
+
+        #id_first_name {
+            height: 1.8rem;
+            margin-left: 1.9rem;
+            margin-bottom: 1rem;
+
+            color: black;
+        }
+        #id_last_name {
+            height: 1.8rem;
+            color: black;
+            margin-left: 2rem;
+        }
+    </style>
+{% endblock %}
+
+

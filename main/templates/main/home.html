@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css\style.css' %}">
+    <style>
+        #content{
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 12vh; 
+        }
+        #id_url{
+            width: 50rem;
+            height: 2.5rem;
+            border-color: rgb(199, 30, 143);
+            border-width: 0.1rem;
+            margin-right: 0.3rem;
+            padding-left: 0.25rem;
+        }
+        #id_search{
+            width: 20rem;
+            height: 2.5rem;
+            border-color: rgb(199, 30, 143);
+            border-width: 0.1rem;
+            margin-right: 0.3rem;
+            padding-left: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="content" class="container max-w-full relative">
+        <header class="flex md:px-8">
+            <h1 class="md:text-4xl text-index-color-purple text-4xl flex-1 font-bold md:mt-4 ml-2 mt-2">{ ScrapeEaseHub } </h1>
+            <nav>
+                <ul class="flex md:text-xl text-lg mt-3 font-bold">
+                    <li class="mr-2 text-white text-2xl hover:text-index-color-purple"><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- balak ko dito ccheck muna ng webscrape kung ano yung mga tag katapos mapupunta isa isa sa option -->
+        <div id="search" class="container max-w-full md:mt-10">
+            <form method="POST" class="flex flex-col justify-center">
+                {% csrf_token %}
+                <div class="flex justify-center container max-w-full">
+                    {{input}}
+                    <input required class="w-36 mr-2 h-10 border border-index-color-purple pl-2" type="text" name="tags" id="tags" placeholder="Tag Name Ex: div" oninput="change(this)">
+                    <select class="w-32 h-10 border border-index-color-purple" name="type" id="type">
+                        <option value="none">Find By: (None)</option>                    
+                        <option value="class">Class Name</option>                    
+                        <option value="id">ID Name</option>
+                    </select>
+                </div>
+                <div class="flex mt-3 justify-center">
+                    <div id="input_find" class="flex" style="display: none;">
+                        <label id="search-label" class=" h-10 " for="search">CLASS NAME: </label>
+                        {{search_input}}
+                    </div>
+
+                    <!--Get Attribute-->
+                    <select class="w-32 h-10 border border-index-color-purple" name="get" id="get">
+                        <option value="all">Get All</option>
+                        <option value="text">Get Text</option>                    
+                        <option value="src">Get Src</option>
+                        <option value="href">Get Href</option>
+                        <option value="value">Get Value</option>
+                        <option value="id">Get ID</option>
+                    </select>
+
+                
+                    <button id="button" typ="submit" class="w-36  ml-2 h-10 border bg-index-color-purple text-white font-bold hover:bg-index-color-p">Request</button>
+                </div>
+            </form>
+        </div>
+        <hr class="mt-6">
+
+
+        <div id="table" class="md:mt-10 container max-w-full">
+            <h1 class="text-center font-bold">The data in the table is from: <a href="{{link}}" target="_blank">{{link}}</a> </h1>
+
+            <!--FILTER-->
+            {% if data.selection == 'ALL' or no_filter %}
+                <div class="mt-7" id="filter">
+                    <h1 class="text-2xl mt-3">Filter:</h1>
+                    <p>from {{table_head}}>/</p>
+                    <form method="POST" class="mt-2 flex">
+                        {% csrf_token %}
+                        <div class="flex">
+                            <select class="w-32 h-10 border border-index-color-purple" name="filter-get" id="filter-get" value-data="{{no_filter}}">
+                                <option value="filter-tag">Go To Tag</option>
+                                <option value="text">Get Text</option>                    
+                                <option value="src">Get Src</option>
+                                <option value="href">Get Href</option>
+                                <option value="value">Get Value</option>
+                                <option value="id">Get ID</option>
+                            </select>
+                            
+                            <div id="hide-filter-search">
+                                <input required class="w-36 ml-2 h-10 border border-index-color-purple pl-2" type="text" name="filter-tag-input" id="filter-tag-input" placeholder="Tag Name Ex: h1">
+                                <select class="w-32 ml-2 h-10 border border-index-color-purple" name="filter-find-by" id="filter-find-by">
+                                    <option value="filter-none">Find By: (none)</option>
+                                    <option value="filter-class">Class Name</option>                    
+                                    <option value="filter-id">ID Name</option>
+                                </select>
+                                
+                            </div>
+
+                            <input required class=" ml-2 h-10 border border-index-color-purple pl-2 w-96" type="text" name="filter-find-by-input" id="filter-find-by-input" placeholder="Name: " style="display:  none;" value=" ">
+                            <button id="filter-button" typ="submit" class="w-36  ml-2 h-10 border bg-index-color-purple text-white font-bold hover:bg-index-color-p">Filter</button>
+                        </div>          
+                    </form>
+
+                    <!--HELP USER -->
+                    {% if data.length == 1 %}
+                        {% if tag == filter_tag %}
+                            {% for dat in data.datas %}
+                                {% if dat == 'No Item' %}
+                                    <h1 id="help-user" value-tag="{{filter_tag}}" value-type="{{filter_tag_by}}" value-input="{{filter_by_input_value}}" value-link="{{link}}">If the Tag, ID, or Class Name in the table but nothing is showing up try this -> <a class="hover:cursor-pointer text-index-color-p font-bold">click Me</a> </h1>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <h1 class="text-xl mt-3 text-right mr-7">{{data.length}} item/s</h1>
+            <table class=" border border-index-color-purple container max-w-full">
+                <tr class="border border-index-color-purple">
+                    {% if data.selection == 'all' %}
+                        <th><h1 class="text-xl">{{table_head}}</h1></th>
+                    {% else %}
+                        <th><h1 class="text-xl id='table-head'">Get {{data.selection}} from {{table_head}}</h1></th>
+                    {% endif %}
+                </tr>
+                {% if data.length == 1 %}
+                    <tr class="border border-index-color-purple">
+                        {% if data.datas %}
+                            <td class="border border-index-color-purple">{{data.datas}}</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    {% for item in data.datas %}
+                        {% if item %}
+                            <tr class="border border-index-color-purple">
+                                <td class="border border-index-color-purple text-base "> <p class="items"> {{item}} </p> </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+</body>
+
+    <script>
+        const select = document.querySelector('#type')
+        const label = document.querySelector('#search-label')
+        const selection_get = document.querySelector('#get')
+        const tag_input = document.querySelector('#tags')
+        const find_input = document.querySelector('#input_find')
+        const search = document.querySelector('#id_search')
+        const button = document.querySelector('#button')
+
+        select.addEventListener('change', ()=> {
+            if (select.value == 'none'){
+                find_input.style.display = 'none'
+                search.value = ' '
+            }else{
+                find_input.style.display = 'block'
+                find_input.style.display = 'flex'
+                search.value = ''
+            }
+
+            label.innerHTML = (select.value + " Name:").toUpperCase()
+        })
+
+        text = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'b', 'li', 'a']
+
+        const table_head = document.querySelector('#table-head')
+        const filter_div = document.querySelector('#filter')
+        const filter_selection = document.querySelector('#filter-get')
+        const filter_input = document.querySelector('#filter-tag-input')
+        const filter_content = document.querySelector('#hide-filter-search')
+        const filter_find_by_input = document.querySelector('#filter-find-by-input')
+        const filter_find_by_selection = document.querySelector('#filter-find-by')
+
+
+        filter_selection.addEventListener('change', () => {
+            if (filter_selection.value != 'filter-tag'){
+                filter_content.style.display = 'none'
+                filter_find_by_input.style.display = 'none'
+                filter_find_by_selection.value = 'filter-none'
+                
+                filter_input.value = ' '
+                filter_find_by_input.value = ' '
+            }else{
+                filter_content.style.display = 'block'
+                filter_input.value = ''
+            }
+        })
+
+        filter_find_by_selection.addEventListener('change', () => {
+            if (filter_find_by_selection.value == 'filter-none'){
+                filter_find_by_input.style.display = 'none'
+                filter_find_by_input.value = ' '
+            }else{
+                filter_find_by_input.style.display = 'block'
+                filter_find_by_input.value = ''
+            }
+        })
+        
+        const data_value = filter_selection.getAttribute('value-data')
+        if (data_value != ''){
+            if (data_value != 'filter-tag'){
+                filter_selection.value = data_value
+                filter_content.style.display = 'none'
+                filter_input.value = ' '
+            }
+        }
+
+        const url_input = document.querySelector('#id_url')
+        const help_user = document.querySelector('#help-user')
+
+        help_user.addEventListener('click', () => {
+            const tag = help_user.getAttribute('value-tag')
+            const type = help_user.getAttribute('value-type')
+            const input = help_user.getAttribute('value-input')
+            const link = help_user.getAttribute('value-link')
+
+            tag_input.value = tag
+            url_input.value = link
+
+            if (type == 'filter-none'){
+                select.value = 'none'
+                find_input.style.display = 'none'
+
+            }else if(type == 'filter-class'){
+                select.value = 'class'
+                find_input.style.display = 'block'
+                find_input.style.display = 'flex'
+                search.value = input
+            }else{
+                select.value = 'id'
+                find_input.style.display = 'block'
+                find_input.style.display = 'flex'
+                search.value = input
+            }
+        })
+    </script>
+</html>

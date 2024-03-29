@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+
+    {% block style %}
+        <style>
+            #content{
+                background-image: url("{% static 'images/background.jpg' %}");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                height: 100vh; 
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+    <div id="content" class="container max-w-full relative">
+        <header class="flex md:px-8">
+            <h1 class="md:text-4xl text-index-color-purple text-2xl flex-1 font-bold md:mt-4 ml-2 mt-2">{ ScrapeEaseHub } </h1>
+            <nav>
+                <ul class="flex md:text-xl text-lg mt-3 font-bold">
+                    {% block nav-list %}
+                        <li class="mr-2 text-white text-lg md:text-2xl hover:text-index-color-hover"><a href="#">My Portfolio</a></li>
+                    {% endblock %}
+                </ul>
+            </nav>
+        </header>
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+    {% block content2 %}
+
+    {% endblock %}
+</body>
+    {% block script %}
+
+    {% endblock%}
+</html>
